@@ -5,6 +5,7 @@ class DataConnector:
     def getCnct(self, dbname):
         config = {
             'host': '127.0.0.1',
+            # 'host': '192.168.0.100',
             'port': 3306,
             'user': 'root',
             'password': 'test',
@@ -27,8 +28,23 @@ class DataConnector:
 '''
 
 
-class WeiboConnector:
-    pass
+class WeiboConnector(DataConnector):
+    cnct = None
+
+    def __init__(self):
+        self.cnct = self.getCnct("sina_weibo")
+
+    def retrieve(self, size=None):
+        cursor = self.cnct.cursor()
+        query = '''
+            select * from optimized_weibo;
+        '''
+        cursor.execute(query)
+        if size is None:
+            result = cursor.fetchall()
+        else:
+            result = cursor.fetchmany(size)
+        return result
 
 
 class WikiConnector(DataConnector):
