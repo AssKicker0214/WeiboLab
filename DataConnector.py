@@ -4,8 +4,8 @@ import pymysql
 class DataConnector:
     def getCnct(self, dbname):
         config = {
-            'host': '127.0.0.1',
-            # 'host': '192.168.0.100',
+            # 'host': '127.0.0.1',
+            'host': '192.168.0.100',
             'port': 3306,
             'user': 'root',
             'password': 'test',
@@ -14,6 +14,9 @@ class DataConnector:
             'cursorclass': pymysql.cursors.DictCursor
         }
         cnct = pymysql.connect(**config)
+
+        # 使用 utf-8
+        cnct.cursor().execute("SET NAMES utf8")
         return cnct
 
 
