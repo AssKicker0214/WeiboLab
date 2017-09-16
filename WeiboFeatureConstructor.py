@@ -9,8 +9,9 @@ class WeiboFeatureConstructor:
 
     def getWeiboText(self):
         list = self.db.retrieve(3)
-        file = open("retrieval.txt", "w+")
         for weibo in list:
-            print(weibo["text"])
-            # print(chardet.detect(weibo["text"]))
-        file.close()
+            text = weibo['text']
+            seg_result = self.seg.segment(text)
+            print(seg_result)
+
+

@@ -1,6 +1,7 @@
 import XMLProcessor as xml
 import DataConnector as cnn
 import WeiboFeatureConstructor as wfc
+import Segment as seg
 
 
 # parse wikipedia xml
@@ -15,7 +16,7 @@ def parseXml():
 
 
 def construct_weibo_feature():
-    constructor = wfc.WeiboFeatureConstructor(cnn.WeiboConnector(), None)
+    constructor = wfc.WeiboFeatureConstructor(cnn.WeiboConnector(), seg.Segment())
     constructor.getWeiboText()
 
 
