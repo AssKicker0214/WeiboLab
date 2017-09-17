@@ -4,8 +4,8 @@ import pymysql
 class DataConnector:
     def getCnct(self, dbname):
         config = {
-            # 'host': '127.0.0.1',
-            'host': '192.168.0.100',
+            'host': '127.0.0.1',
+            # 'host': '192.168.0.100',
             'port': 3306,
             'user': 'root',
             'password': 'test',
@@ -20,19 +20,8 @@ class DataConnector:
         return cnct
 
 
-'''
-'host': '127.0.0.1',
-          'port': 3306,
-          'user': 'root',
-          'password': 'zhyea.com',
-          'db': 'employees',
-          'charset': 'utf8mb4',
-          'cursorclass': pymysql.cursors.DictCursor
-'''
-
-
 class WeiboConnector(DataConnector):
-    cnct = None
+    # cnct = None
 
     def __init__(self):
         self.cnct = self.getCnct("sina_weibo")
@@ -47,11 +36,12 @@ class WeiboConnector(DataConnector):
             result = cursor.fetchall()
         else:
             result = cursor.fetchmany(size)
+        cursor.close()
         return result
 
 
 class WikiConnector(DataConnector):
-    cnct = None
+    # cnct = None
 
     def __init__(self):
         self.cnct = self.getCnct("wikipedia")
@@ -63,7 +53,7 @@ class WikiConnector(DataConnector):
             VALUES ("%s", "%s", "%s");
         '''
         try:
-            cursor.execute(query % (doc["title"]+"", doc["abstract"]+"", doc["url"]+""))
+            cursor.execute(query % (doc["title"] + "", doc["abstract"] + "", doc["url"] + ""))
             self.cnct.commit()
         except Exception:
             print("error=>", doc)
@@ -77,3 +67,21 @@ class WikiConnector(DataConnector):
         cursor = self.cnct.cursor()
         cursor.execute("DELETE FROM docs")
         self.cnct.commit()
+
+    def retrieve_by_word(self, word, top_C=50):
+        cursor = self.cnct.cursor()
+        query = '''
+            SELECT title, abstract from docs WHERE MATCH(abstract) AGAINST('%s') LIMIT %d;
+        '''
+        cursor.execute(query % (word, top_C))
+        self.cnct.commit()
+        result = cursor.fetchall()
+        cursor.close()
+        return result
+
+
+# wiki = WikiConnector()
+# rs = wiki.retrieve_by_word('数学', 10)
+# for t in rs:
+#     print(t)
+#     print("=====================",t['abstract'].count('数学'))

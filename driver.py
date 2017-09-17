@@ -16,8 +16,8 @@ def parseXml():
 
 
 def construct_weibo_feature():
-    constructor = wfc.WeiboFeatureConstructor(cnn.WeiboConnector(), seg.Segment())
-    constructor.getWeiboText()
+    constructor = wfc.WeiboFeatureConstructor(cnn.WeiboConnector(), cnn.WikiConnector(), seg.Segment())
+    constructor.get_weibo_text()
 
 
 construct_weibo_feature()
