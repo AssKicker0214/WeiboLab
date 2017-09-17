@@ -29,7 +29,7 @@ class WeiboConnector(DataConnector):
     def retrieve(self, size=None):
         cursor = self.cnct.cursor()
         query = '''
-            select * from optimized_weibo;
+            select * from optimized_weibo limit 30, 10;
         '''
         cursor.execute(query)
         if size is None:
