@@ -1,4 +1,5 @@
 import jieba
+import jieba.posseg as pos_seg
 import re
 
 
@@ -7,17 +8,13 @@ class Segment:
         pass
 
     def sentence_segment(self, text):
-        pass
+        sentences = re.split('[。!！？?]+', text)
+        return sentences
 
-    def phrase_segment(self):
-        pass
+    def phrase_segment(self, sentence):
+        words_gen = jieba.cut(sentence)
+        return words_gen
 
     def segment(self, text, sentence=True, phrase=True):
-        sentences = re.split('[。!！？?]+', text)
-        rs = {"sentence": sentences, "phrases": []}
-        if phrase:
-            for s in sentences:
-                rs["phrases"].append(jieba.cut(s))
-        return rs
+        pass
 
-print(jieba.cut("你的眼睛发着光"))

@@ -11,7 +11,8 @@ class WeiboFeatureConstructor:
         list = self.db.retrieve(3)
         for weibo in list:
             text = weibo['text']
-            seg_result = self.seg.segment(text)
-            print(seg_result)
+            sentences = self.seg.sentence_segment(text)
+            for sentence in sentences:
+                words_gen = self.seg.phrase_segment(sentence)
 
 
