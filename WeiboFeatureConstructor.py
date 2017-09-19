@@ -52,7 +52,7 @@ class PhraseLevelSimilarityCalculator:
                     self.phrase_occurrences[phrase] = cnt
                     self.phrases.append(phrase)
                     self.articles_by_phrases.append(articles)
-        print(self.phrase_occurrences)
+        print("wiki全文检索页数", self.phrase_occurrences)
 
     def co_occur(self):
         length = len(self.phrases)
@@ -143,7 +143,7 @@ class PhraseLevelSimilarityCalculator:
 
     # map to value from 0 to 1
     def normalize(self, x, min, max):
-        return (x - min + 0.0)/(max - min)
+        return 0 if min==max else (x - min + 0.0)/(max - min)
 
     def remove_semantic_duplicate(self):
         length = len(self.jcrd)
@@ -194,13 +194,37 @@ class WeiboFeatureConstructor:
         resource = numpy.load("./data/all_weibo_list.npy")
         print(resource)
         for weibo in resource:
-            for sentences in weibo:
-                # build sentence level feature and phrase level feature
-                for sentence in sentences:
-                    sentence_level_seeds = sentence.phrases
-                    phrase_feature = PhraseLevelSimilarityCalculator(sentence_level_seeds, self.finder)
-                    phrase_level_seeds = phrase_feature.remove_semantic_duplicate()
+            feature_frequency = {}
+            print("============微博=============")
+            for sentence in weibo:
+                print("----------句子-----------")
+                print(sentence["origin"])
+                sentence_level_seeds = sentence["phrase"]
+                phrase_feature = PhraseLevelSimilarityCalculator(sentence_level_seeds, self.finder)
+                phrase_level_seeds = phrase_feature.remove_semantic_duplicate()
+
+                for seed_phrase in sentence_level_seeds:
+                    semantic_features = self.wiki_query(seed_phrase, "OR")
+                    for semantic_feature in semantic_features:
+                        title = semantic_feature['title']
+                        if title in feature_frequency:
+                            feature_frequency[title] += 1
+                        else:
+                            feature_frequency[title] = 1
+
+                for seed_phrase in phrase_level_seeds:
+                    semantic_features = self.wiki_query(seed_phrase, "AND")
+                    for semantic_feature in semantic_features:
+                        title = semantic_feature['title']
+                        if title in feature_frequency:
+                            feature_frequency[title] += 1
+                        else:
+                            feature_frequency[title] = 1
+            sorted_array = sorted(feature_frequency.items(), key=lambda d:d[1], reverse=True)
+            print("语义特征:", (sorted_array))
+            print("==============\n")
 
     def wiki_query(self, seed_phrase, query_type):
         words_gen = self.seg.word_segment(seed_phrase)
-        raw_semantic_features = self.db.multi_words_query(words_gen, query_type)
+        raw_semantic_features = self.finder.multi_words_query(words_gen, query_type)
+        return raw_semantic_features

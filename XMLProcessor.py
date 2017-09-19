@@ -13,7 +13,7 @@ class WikiHandler(xml.sax.ContentHandler):
     def startDocument(self):
         print("开始解析xml文档...")
         print("清除数据库原有数据")
-        self.db.removeDocs()
+        # self.db.removeDocs()
 
     def startElement(self, name, attrs):
         self.__type = name

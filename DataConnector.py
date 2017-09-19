@@ -52,7 +52,7 @@ class WikiConnector(DataConnector):
     def insertWikiDoc(self, doc):
         cursor = self.cnct.cursor()
         query = '''
-            INSERT INTO docs (`title`, `abstract`, `url`)
+            INSERT INTO docs_full_size (`title`, `abstract`, `url`)
             VALUES ("%s", "%s", "%s");
         '''
         try:
@@ -68,13 +68,13 @@ class WikiConnector(DataConnector):
 
     def removeDocs(self):
         cursor = self.cnct.cursor()
-        cursor.execute("DELETE FROM docs")
+        cursor.execute("DELETE FROM docs_full_size")
         self.cnct.commit()
 
     def retrieve_by_word(self, word, top_C=50):
         cursor = self.cnct.cursor()
         query = '''
-            SELECT title, abstract from docs WHERE MATCH(abstract) AGAINST('%s') LIMIT %d;
+            SELECT title, abstract from docs_full_size WHERE MATCH(abstract) AGAINST('%s') LIMIT %d;
         '''
         cursor.execute(query % (word, top_C))
         self.cnct.commit()
@@ -82,12 +82,13 @@ class WikiConnector(DataConnector):
         cursor.close()
         return result
 
-    def multi_words_query(self, words, query_type, top_w=50):
+    def multi_words_query(self, words, query_type, top_w=100):
         query_conditions = []
         for word in words:
             query_conditions.append(" match(abstract) against('%s') " % word)
         condition = query_type.join(query_conditions)
-        query = "SELECT title FROM docs WHERE"+condition+"LIMIT "+top_w
+        query = "SELECT title FROM docs_full_size WHERE"+condition+"LIMIT "+str(top_w)
+        # print("=>",query)
         cursor = self.cnct.cursor()
         cursor.execute(query)
         result = cursor.fetchall()
