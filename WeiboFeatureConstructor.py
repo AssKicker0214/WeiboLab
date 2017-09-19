@@ -18,10 +18,25 @@ class PhraseLevelSimilarityCalculator:
         self.min_ovlp = None
         self.finder = finder
 
-        self.occur(phrases_gen)
+        self.occur(phrases_gen, True)
         self.co_occur()
-        for row in self.jcrd:
-            print(row)
+        # for row in self.dice:
+        #     print(row)
+        # print()
+        # for row in self.jcrd:
+        #     print(row)
+        # print()
+        # for row in self.ovlp:
+        #     print(row)
+
+    # i < j
+    def get_similarity(self, i, j, alpha=0.3, beta=0.3):
+        wd = self.normalize(self.dice[i][j], self.min_dice, self.max_dice)
+        wj = self.normalize(self.jcrd[i][j], self.min_jcrd, self.max_jcrd)
+        wo = self.normalize(self.ovlp[i][j], self.min_ovlp, self.max_ovlp)
+        similarity = alpha*wd + beta*wj + (1-alpha-beta)*wo
+        return similarity
+
 
     def occur(self, phrases_gen, filter=False):
         for phrase in phrases_gen:
@@ -30,9 +45,8 @@ class PhraseLevelSimilarityCalculator:
                 cnt = 0
                 for article in articles:
                     cnt += article['abstract'].count(phrase)
-                if filter:
-                    if cnt == 0:
-                        continue
+                if filter and cnt == 0:
+                    continue
                 else:
                     self.phrase_occurrences[phrase] = cnt
                     self.phrases.append(phrase)
@@ -54,7 +68,7 @@ class PhraseLevelSimilarityCalculator:
 
             for j in range(i + 1, length):
                 tj = self.phrases[j]
-                print("ti,tj:", ti, tj)
+                # print("ti,tj:", ti, tj)
                 articles_by_tj = self.articles_by_phrases[j]
 
                 # tj's number by query of tj
@@ -72,7 +86,7 @@ class PhraseLevelSimilarityCalculator:
                 for article_by_tj in articles_by_tj:
                     ti_by_tj += article_by_tj['abstract'].count(ti)
 
-                print(ti_by_ti, tj_by_tj, ti_by_tj, tj_by_ti)
+                # print(ti_by_ti, tj_by_tj, ti_by_tj, tj_by_ti)
                 dice = self.wiki_dice(ti_by_ti, tj_by_tj, ti_by_tj, tj_by_ti)
                 jcrd = self.wiki_jaccard(ti_by_ti, tj_by_tj, ti_by_tj, tj_by_ti)
                 ovlp = self.wiki_overlap(ti_by_ti, tj_by_tj, ti_by_tj, tj_by_ti)
@@ -126,9 +140,9 @@ class PhraseLevelSimilarityCalculator:
 
         return rs
 
-# map to value from 0 to 1
-def normalize(x):
-    return ()
+    # map to value from 0 to 1
+    def normalize(self, x, min, max):
+        return (x - min + 0.0)/(max - min)
 
 
 class WeiboFeatureConstructor:
@@ -152,4 +166,5 @@ class WeiboFeatureConstructor:
                 print(sentence)
                 words_gen = self.seg.phrase_segment(sentence)
                 phrase_feature = PhraseLevelSimilarityCalculator(words_gen, self.finder)
+                # similarity = phrase_feature.get_similarity()
                 words_gen = None
