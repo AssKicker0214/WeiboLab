@@ -144,6 +144,26 @@ class PhraseLevelSimilarityCalculator:
     def normalize(self, x, min, max):
         return (x - min + 0.0)/(max - min)
 
+    def remove_semantic_duplicate(self):
+        length = len(self.jcrd)
+        max = 0
+        most_duplicated_phrase = None
+        for i in range(length):
+            sum_of_similarity = 0
+            for j in range(length):
+                if i<j:
+                    sum_of_similarity += self.get_similarity(i, j)
+                elif i>j:
+                    sum_of_similarity += self.get_similarity(j, i)
+
+            if sum_of_similarity > max:
+                most_duplicated_phrase = self.phrases[i]
+                max = sum_of_similarity
+        if most_duplicated_phrase is not None:
+            for seed_phrase in self.phrases:
+                if seed_phrase != most_duplicated_phrase:
+                    yield seed_phrase
+
 
 class WeiboFeatureConstructor:
     db = None
@@ -168,3 +188,17 @@ class WeiboFeatureConstructor:
                 phrase_feature = PhraseLevelSimilarityCalculator(words_gen, self.finder)
                 # similarity = phrase_feature.get_similarity()
                 words_gen = None
+
+    def get_weibo_text_mock(self):
+        resource = None
+        for weibo in resource:
+            for sentences in weibo:
+                # build sentence level feature and phrase level feature
+                for sentence in sentences:
+                    sentence_level_seeds = sentence.phrases
+                    phrase_feature = PhraseLevelSimilarityCalculator(sentence_level_seeds, self.finder)
+                    phrase_level_seeds = phrase_feature.remove_semantic_duplicate()
+
+    def wiki_query(self, seed_phrase, query_type):
+        words_gen = self.seg.word_segment(seed_phrase)
+        raw_semantic_features = self.db.multi_words_query(words_gen, query_type)

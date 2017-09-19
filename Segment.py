@@ -15,6 +15,11 @@ class Segment:
         words_gen = jieba.cut(sentence)
         return words_gen
 
+    def word_segment(self, phrase):
+        words_gen = jieba.cut(phrase)
+        return words_gen
+
+    # def phrase_segment_mock(self):
+
     def segment(self, text, sentence=True, phrase=True):
         pass
-

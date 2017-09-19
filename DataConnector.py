@@ -39,6 +39,9 @@ class WeiboConnector(DataConnector):
         cursor.close()
         return result
 
+    def retrieve_mock(self):
+        return ''
+
 
 class WikiConnector(DataConnector):
     # cnct = None
@@ -79,7 +82,17 @@ class WikiConnector(DataConnector):
         cursor.close()
         return result
 
-
+    def multi_words_query(self, words, query_type, top_w=50):
+        query_conditions = []
+        for word in words:
+            query_conditions.append(" match(abstract) against('%s') " % word)
+        condition = query_type.join(query_conditions)
+        query = "SELECT title FROM docs WHERE"+condition+"LIMIT "+top_w
+        cursor = self.cnct.cursor()
+        cursor.execute(query)
+        result = cursor.fetchall()
+        cursor.close()
+        return result
 # wiki = WikiConnector()
 # rs = wiki.retrieve_by_word('数学', 10)
 # for t in rs:
