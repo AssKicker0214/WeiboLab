@@ -1,4 +1,5 @@
 # import chardet
+import numpy
 class PhraseLevelSimilarityCalculator:
     def __init__(self, phrases_gen, finder):
         # f(ti)
@@ -190,7 +191,8 @@ class WeiboFeatureConstructor:
                 words_gen = None
 
     def get_weibo_text_mock(self):
-        resource = None
+        resource = numpy.load("./data/all_weibo_list.npy")
+        print(resource)
         for weibo in resource:
             for sentences in weibo:
                 # build sentence level feature and phrase level feature
