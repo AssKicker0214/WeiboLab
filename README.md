@@ -1,7 +1,7 @@
 # WeiboLab
 *created by QiaoHongbo* 
 
-Data mining for short textual data in social media.
+Data mining for short textual data in social media. 
 
 ## Data Source
 ### Semantic Knowledge Source
