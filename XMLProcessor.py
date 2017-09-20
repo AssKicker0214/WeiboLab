@@ -6,14 +6,16 @@ class WikiHandler(xml.sax.ContentHandler):
     __content = ''
     __doc = {}
     db = None
+
     def __init__(self, dbConnector):
         self.currentData = ""
         self.db = dbConnector
 
     def startDocument(self):
-        print("开始解析xml文档...")
-        print("清除数据库原有数据")
+        # print("开始解析xml文档...")
+        # print("清除数据库原有数据")
         # self.db.removeDocs()
+        pass
 
     def startElement(self, name, attrs):
         self.__type = name
@@ -37,10 +39,7 @@ class WikiHandler(xml.sax.ContentHandler):
                 self.__doc = {}
             else:
                 raise InsertIntoDatabaseError()
-            # raise TestOverError()
-
-
-
+                # raise TestOverError()
 
 
 def get_parser():
@@ -52,6 +51,7 @@ def get_parser():
 class TestOverError(Exception):
     def __init__(self):
         Exception("test over")
+
 
 class InsertIntoDatabaseError(Exception):
     def __init__(self, doc):

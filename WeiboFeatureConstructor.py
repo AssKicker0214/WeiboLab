@@ -160,6 +160,7 @@ class PhraseLevelSimilarityCalculator:
             if sum_of_similarity > max:
                 most_duplicated_phrase = self.phrases[i]
                 max = sum_of_similarity
+        print("most duplicated phrase:", most_duplicated_phrase)
         if most_duplicated_phrase is not None:
             for seed_phrase in self.phrases:
                 if seed_phrase != most_duplicated_phrase:
@@ -225,6 +226,7 @@ class WeiboFeatureConstructor:
             print("==============\n")
 
     def wiki_query(self, seed_phrase, query_type):
-        words_gen = self.seg.word_segment(seed_phrase)
+        words_gen = self.seg.term_segment(seed_phrase)
+        # words_gen = self.seg.word_segment(seed_phrase)
         raw_semantic_features = self.finder.multi_words_query(words_gen, query_type)
         return raw_semantic_features

@@ -86,9 +86,13 @@ class WikiConnector(DataConnector):
         query_conditions = []
         for word in words:
             query_conditions.append(" match(abstract) against('%s') " % word)
+
+        if len(query_conditions) == 0:
+            return []
+
         condition = query_type.join(query_conditions)
-        query = "SELECT title FROM docs_full_size WHERE"+condition+"LIMIT "+str(top_w)
-        # print("=>",query)
+        query = "SELECT title FROM docs_full_size WHERE"+condition+" LIMIT "+str(top_w)
+        print("=>",query)
         cursor = self.cnct.cursor()
         cursor.execute(query)
         result = cursor.fetchall()
