@@ -52,7 +52,7 @@ class PhraseLevelSimilarityCalculator:
                     self.phrase_occurrences[phrase] = cnt
                     self.phrases.append(phrase)
                     self.articles_by_phrases.append(articles)
-        print("wiki全文检索页数", self.phrase_occurrences)
+        # print("wiki全文检索页数", self.phrase_occurrences)
 
     def co_occur(self):
         length = len(self.phrases)

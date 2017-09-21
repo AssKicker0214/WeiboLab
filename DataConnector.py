@@ -92,7 +92,7 @@ class WikiConnector(DataConnector):
 
         condition = query_type.join(query_conditions)
         query = "SELECT title FROM docs_full_size WHERE"+condition+" LIMIT "+str(top_w)
-        print("=>",query)
+        # print("=>",query)
         cursor = self.cnct.cursor()
         cursor.execute(query)
         result = cursor.fetchall()
