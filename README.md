@@ -1,3 +1,4 @@
+
 # WeiboLab
 *created by QiaoHongbo* 
 
@@ -15,3 +16,4 @@ Here's my environment,
 `Python 3.6` `Anaconda 3` `MySQL 5.7`
 
 The environment is important, because some of the features I use only supported by the latest version.
+**choose `MYISAM` as the engine of MySQL** to get support for chinese fulltext index.
